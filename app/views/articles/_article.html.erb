@@ -1,0 +1,42 @@
+<div id="<%=dom_id article %>">
+  <div class='row'>
+    <div class='col-3'>
+      <% if article.thumbnail.attached?%>
+        <%=image_tag article.thumbnail, size: "200x200"%>
+      <%end%>
+    </div>
+    <div class='col-11'>
+      <h3><%= article.title%></h3>
+      uploaded by <%= article.user.email %>
+    </div>
+
+
+    <div class='col-3'>
+
+      <% if current_user.present? && current_user.purchases.where(article_id: article.id).any?%>
+        <div class='btn btn-warning'>Already Purchased!</div>
+      <%else%>
+        <%= form_with url: :create_checkout_session do |f|%>
+          <%= f.hidden_field :id, value: article.id %>
+          <%= f.submit 'Buy Me', class: 'btn btn-success'%>
+        <%end%>
+      <% end %>
+
+
+
+
+    </div>
+  </div>
+  <p>
+    <%=article.content%>
+  </p>
+  <div class='row'>
+    <% if article.file.attached? %>
+      <% if article.file.video?%>
+        <%=video_tag url_for(article.file), controls: '' %>
+      <% else %>
+        <%=image_tag article.file%>
+      <%end%>
+    <%end%>
+  </div>
+</div>

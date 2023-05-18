@@ -1,0 +1,35 @@
+# connect via
+# psql -h 192.168.99.100 --port 54320 -U postgres my_database
+  #image: "postgres:13.5"
+
+version: "3"
+services: 
+  db:
+    build:
+      context: . 
+      dockerfile: Dockerfile-postgres 
+    container_name: "stripe_postgres"
+    command: ["postgres", "-c", "logging_collector=on", "-c", "log_filename=postgresql.log", "-c", "log_statement=all"]
+    environment:
+      POSTGRES_PASSWORD: "stripepassword"
+    ports:
+      - 54678:5432
+    volumes:
+      - stripe_dbdata:/var/lib/postgresql/data 
+  redis:
+    image: redis:7.0.8
+    command: redis-server --appendonly yes 
+    ports: 
+      - target: 6378
+        published: 16969
+        protocol: tcp 
+        mode: host 
+    volumes: 
+      - stripe_redis_data:/data 
+    restart: always 
+    environment: 
+      - REDIS_REPLICATION_MODE=master 
+volumes: 
+  stripe_redis_data: 
+  stripe_dbdata: 
+

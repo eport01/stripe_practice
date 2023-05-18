@@ -1,0 +1,23 @@
+local: &local 
+  adapter: postgresql 
+  encoding: unicode 
+  pool: 5 
+  host:      <%= ENV['DBHOST'] %>
+  port:      <%= ENV['DBPORT'] %>
+  username:  <%= ENV['DBUSER'] %>
+  password:  <%= ENV['DBPASSWORD'] %>
+
+development: 
+  <<: *local 
+  database: "rails7stripe_development"
+
+test: &test 
+  <<: *local 
+  database: "rails7stripe_test"
+
+production: 
+  adapter: postgresql
+  encoding: unicode 
+  reconnect: true 
+  pool: <%= ENV["DB_POOL"] || ENV['RAILS_MAX_THREADS'] || 30 %>
+  url: <%= ENV['DATABASE_URL'] %> 
